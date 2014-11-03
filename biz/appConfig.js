@@ -8,7 +8,7 @@ define(function(require) {
 			action: 'todos/todos'
 		}, {
 			location: '/todos/{{id}}',//变量需要双花括号包围
-			action: 'icheck/icheck'
+			action: 'todos/todos'
 		}, {
 			location: '/bootstrap',
 			action: 'bootstrap/bs'

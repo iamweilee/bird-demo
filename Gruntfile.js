@@ -15,7 +15,7 @@ module.exports = function(grunt) {
           expand: true,
           cwd: 'biz/',
           src: ['**/*.js'],
-          dest: 'biz/__transported__'
+          dest: 'tmp/biz'
         }]
       },
     },
@@ -28,7 +28,7 @@ module.exports = function(grunt) {
         separator: '\n'
       },
       bird: {
-        src: ['biz/__transported__/**/*.js'],
+        src: ['tmp/biz/**'],
         dest: 'biz/biz.js'
       }
     },
@@ -43,6 +43,7 @@ module.exports = function(grunt) {
         }]
       }
     },
+    clean: ['tmp', 'asset/css/all.css', 'biz/biz*.js', 'moduleConfig.product.js'],
     less: {
       all: {
         /*options: {
@@ -55,19 +56,6 @@ module.exports = function(grunt) {
       }
     },
     copy: {
-      /*homepage: {
-        src: 'demo.html',
-        dest: 'output/demo.html',
-        options: {
-          process: function (content, srcpath) {
-            content = content.replace("./dep/lib/seajs/sea-debug.js","lib/seajs/sea-debug.js");
-            content = content.replace("!--script","script");
-            content = content.replace("script--","script");
-            //content = content.replace("./demo/entry","entry");
-            return content;
-          }
-        }
-      },*/
       moduleConfig: {
         src: 'moduleConfig.js',
         dest: 'moduleConfig.product.js',
@@ -99,8 +87,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   grunt.loadNpmTasks('grunt-contrib-copy');
-  //grunt.loadNpmTasks('grunt-contrib-concat');
-  //grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   //grunt.loadNpmTasks('grunt-contrib-watch');
   //grunt.loadNpmTasks('grunt-contrib-jshint');
   //grunt.loadNpmTasks('grunt-contrib-qunit');
@@ -108,5 +96,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-cmd-transport');
   grunt.loadNpmTasks('grunt-contrib-connect');
   // Default task(s).
-  grunt.registerTask('default', ['copy', 'less', 'transport', 'uglify', 'connect']);
+  grunt.registerTask('default', ['clean', 'copy', 'less', 'transport', 'concat', 'uglify', 'connect']);
 };

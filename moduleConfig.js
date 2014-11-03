@@ -14,21 +14,16 @@
 		app: {
 			prefix: modprefix + 'biz/',
 			mods: [
-				'common/404' ,'index/index', 'todos/todos', 'bootstrap/bs', 'entry'
+				'common/404' ,'index/index', 'todos/todos', 'bootstrap/bs', 
+				'entry'
 			]
 		}
 	};
-	//end
-
+	
 	each(modMap, function(m) {
 		each(m.mods, function(modName) {
 			alias[modName] = m.prefix + modName;
 		});
-	});
-
-	seajs.config({
-		base: modprefix,
-		alias: alias
 	});
 
 	function each(p, handle) {
@@ -49,4 +44,11 @@
 			}
 		}
 	}
+	//end
+
+	seajs.config({
+		base: modprefix,
+		alias: alias
+	});
+
 })();
