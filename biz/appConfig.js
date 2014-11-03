@@ -13,9 +13,6 @@ define(function(require) {
 			location: '/bootstrap',
 			action: 'bootstrap/bs'
 		}, {
-			location: '/icheck',
-			action: 'icheck/icheck'
-		}, {
 			location: '/404',
 			action: 'common/404',
 			isNotFound: true

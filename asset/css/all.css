@@ -1,0 +1,397 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.4em;
+  margin: 0 auto;
+  -webkit-font-smoothing: antialiased;
+}
+#todoapp {
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 40px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 2px 6px 0;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 2px 6px 0;
+  -ms-box-shadow: rgba(0, 0, 0, 0.2) 0 2px 6px 0;
+  -o-box-shadow: rgba(0, 0, 0, 0.2) 0 2px 6px 0;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 2px 6px 0;
+  -webkit-border-radius: 0 0 5px 5px;
+  -moz-border-radius: 0 0 5px 5px;
+  -ms-border-radius: 0 0 5px 5px;
+  -o-border-radius: 0 0 5px 5px;
+  border-radius: 0 0 5px 5px;
+}
+#todoapp h1 {
+  font-size: 36px;
+  font-weight: bold;
+  text-align: center;
+  padding: 0 0 10px 0;
+}
+#todoapp input[type="text"] {
+  width: 466px;
+  font-size: 24px;
+  font-family: inherit;
+  line-height: 1.4em;
+  border: 0;
+  outline: none;
+  padding: 6px;
+  border: 1px solid #999999;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  -ms-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  -o-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+}
+#todoapp input::-webkit-input-placeholder {
+  font-style: italic;
+}
+#main {
+  /*display: none;*/
+}
+#todo-list {
+  margin: 10px 0;
+  padding: 0;
+  list-style: none;
+}
+#todo-list li {
+  padding: 18px 20px 18px 0;
+  position: relative;
+  font-size: 24px;
+  border-bottom: 1px solid #cccccc;
+}
+#todo-list li:last-child {
+  border-bottom: none;
+}
+#todo-list li.done label {
+  color: #777777;
+  text-decoration: line-through;
+}
+#todo-list .destroy {
+  position: absolute;
+  right: 5px;
+  top: 20px;
+  display: none;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background: url(../../img/todos/destroy.png) no-repeat;
+}
+#todo-list li:hover .destroy {
+  display: block;
+}
+#todo-list .destroy:hover {
+  background-position: 0 -20px;
+}
+#todo-list li.editing {
+  border-bottom: none;
+  margin-top: -1px;
+  padding: 0;
+}
+#todo-list li.editing:last-child {
+  margin-bottom: -1px;
+}
+#todo-list li.editing .edit {
+  display: block;
+  width: 444px;
+  padding: 13px 15px 14px 20px;
+  margin: 0;
+}
+#todo-list li.editing .view {
+  display: none;
+}
+#todo-list li .view label {
+  word-break: break-word;
+}
+#todo-list li .edit {
+  display: none;
+}
+#todoapp footer {
+  /*display: none;*/
+  margin: 0 -20px -20px -20px;
+  overflow: hidden;
+  color: #555555;
+  background: #f4fce8;
+  border-top: 1px solid #ededed;
+  padding: 0 20px;
+  line-height: 37px;
+  -webkit-border-radius: 0 0 5px 5px;
+  -moz-border-radius: 0 0 5px 5px;
+  -ms-border-radius: 0 0 5px 5px;
+  -o-border-radius: 0 0 5px 5px;
+  border-radius: 0 0 5px 5px;
+}
+#clear-completed {
+  float: right;
+  line-height: 20px;
+  text-decoration: none;
+  background: rgba(0, 0, 0, 0.1);
+  color: #555555;
+  font-size: 11px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 0 10px 1px;
+  cursor: pointer;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
+  border-radius: 12px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
+  -ms-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
+  -o-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
+}
+#clear-completed:hover {
+  background: rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
+  -ms-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
+  -o-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
+  box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
+}
+#clear-completed:active {
+  position: relative;
+  top: 1px;
+}
+#todo-count span {
+  font-weight: bold;
+}
+#instructions {
+  margin: 10px auto;
+  color: #777777;
+  text-shadow: rgba(255, 255, 255, 0.8) 0 1px 0;
+  text-align: center;
+}
+#instructions a {
+  color: #336699;
+}
+#credits {
+  margin: 30px auto;
+  color: #999;
+  text-shadow: rgba(255, 255, 255, 0.8) 0 1px 0;
+  text-align: center;
+}
+#credits a {
+  color: #888;
+}
+#Container {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 1280px;
+  height: auto;
+  font: normal 12pt Arial;
+  margin: 0 auto;
+}
+#Frontface {
+  width: 604px;
+  height: 167px;
+  margin-top: -83px;
+  margin-left: -302px;
+}
+.pannel {
+  background-color: #f5f5f5;
+}
+#Copyright {
+  float: right;
+  position: relative;
+  bottom: 2.5em;
+  right: 2em;
+  color: #cdcdcd;
+  font: normal 10pt Arial;
+}
+.signinview {
+  width: 434px;
+  height: 330px;
+  margin-top: -165px;
+  margin-left: -217px;
+}
+.registerview {
+  width: 434px;
+  height: 450px;
+  margin-top: -225px;
+  margin-left: -217px;
+}
+.bgcolor {
+  /*background-color: rgb(243,48,74);*/
+  z-index: -1;
+}
+.txtbg {
+  background: url(../../img/hjw/word.png) no-repeat;
+}
+.margin0auto {
+  margin: 0 auto;
+}
+.pic_box {
+  font-size: 0;
+  *font-size: 200px;
+  text-align: center;
+}
+.pic_box img {
+  vertical-align: middle;
+}
+.pic_box:after {
+  display: inline-block;
+  width: 0;
+  height: 100%;
+  content: "center";
+  vertical-align: middle;
+  overflow: hidden;
+}
+.fl {
+  float: left;
+}
+.vhcenter {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+.btnbox {
+  width: 434px;
+  height: 45px;
+  margin: 55px auto 0 auto;
+  text-align: center;
+}
+a {
+  text-decoration: none;
+  outline: none;
+  cursor: pointer;
+}
+.btnbox a {
+  display: block;
+  width: 203px;
+  height: 45px;
+  line-height: 45px;
+  margin: 0 7px;
+}
+.asignin {
+  background: url(../../img/hjw/btn_signin.png) no-repeat;
+  color: #ffffff;
+}
+.aregister {
+  background: url(../../img/hjw/btn_register.png) no-repeat;
+  color: #f3445c;
+}
+input {
+  border: solid 1px #f3445c;
+  padding: 5px;
+  width: 290px;
+  height: 25px;
+  margin: 11px;
+  outline: none;
+}
+.inputValid {
+  border: solid 1px #00ff00;
+}
+.bar {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  background: url(../../img/hjw/nav.png) no-repeat;
+}
+.bar a {
+  *margin-top: -30px;
+}
+.bar a img {
+  border: none;
+}
+.bar a:link,
+.bar a:visited,
+.bar a:hover,
+.bar a:active {
+  color: transparent;
+}
+.main {
+  padding: 24px;
+  text-align: center;
+}
+.submit {
+  text-align: center;
+  color: #ffffff;
+  margin-top: 36px;
+}
+.title {
+  margin-left: 15px;
+  color: #ffffff;
+}
+.note {
+  margin: 15px;
+  font-size: 9pt;
+}
+.submit a {
+  display: block;
+  width: 202px;
+  height: 44px;
+  line-height: 44px;
+  background: url(../../img/hjw/btn_submit.png) no-repeat;
+  margin: 0 auto;
+}
+.submit a:link,
+.submit a:visited,
+.submit a:hover,
+.submit a:active {
+  color: #ffffff;
+}
+.note a:link,
+.submit a:visited,
+.note a:hover,
+.note a:active {
+  color: #000000;
+}
+.close {
+  float: right;
+  margin: 4px 10px 0 0;
+}
+.underline {
+  text-decoration: underline;
+}
+.viewWrapper {
+  font: normal 12pt Arial;
+}
+/**
+ * 	清除浮动影响
+ */
+.fix {
+  *zoom: 1;
+}
+.fix:after {
+  display: block;
+  content: "clear";
+  height: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+.blur {
+  filter: url(blur.svg#blur);
+  /* FireFox, Chrome, Opera */
+  -webkit-filter: blur(10px);
+  /* Chrome, Opera */
+  -moz-filter: blur(10px);
+  -o-filter: blur(10px);
+  -ms-filter: blur(10px);
+  filter: blur(10px);
+  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=10, MakeShadow=false);
+  /* IE6~IE9 */
+}
+/**
+ * 	media query
+ */
+@media screen and (max-width: 1280px) {
+  #Container,
+  #Bg img {
+    width: 1024px;
+    height: 678px;
+  }
+}
+@media screen and (max-width: 1024px) {
+  #Container,
+  #Bg img {
+    width: 768px;
+    height: 508px;
+  }
+}

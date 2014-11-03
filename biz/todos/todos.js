@@ -22,7 +22,7 @@ define(function(require) {
 
 	(function () {
 
-		this.tplUrl = './demo/todos/tpl/todos.html';
+		this.tplUrl = './biz/todos/tpl/todos.html';
 
 		this.title = '示例 | Todos';
 

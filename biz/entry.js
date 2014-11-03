@@ -6,7 +6,7 @@ define(function(require) {
 	var Q = require('q');
 
 	require('bird.syspatch');
-	require('bird.ui');//这是必须的,保证在控件里可以同步require到子控件
+	//require('bird.ui');//这是必须的,保证在控件里可以同步require到子控件
 
 	//为bird.array、bird.string、bird.object模块加入chain功能
 	/*var chain = require('bird.chain');

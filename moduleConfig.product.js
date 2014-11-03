@@ -9,7 +9,7 @@
 		'bootstrap': 'dep/ui/bootstrap/js/bootstrap.amd'
 	};
 
-	//begin
+	/*//begin
 	var modMap = {
 		app: {
 			prefix: modprefix + 'biz/',
@@ -18,7 +18,7 @@
 			]
 		}
 	};
-	//end
+	//end*/
 
 	each(modMap, function(m) {
 		each(m.mods, function(modName) {

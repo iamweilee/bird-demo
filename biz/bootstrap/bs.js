@@ -23,7 +23,7 @@ define(function(require) {
 
 	(function () {
 
-		this.tplUrl = './demo/bootstrap/tpl/bs.html';
+		this.tplUrl = './biz/bootstrap/tpl/bs.html';
 
 		this.title = '示例 | 整合Bootstrap';
 

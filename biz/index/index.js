@@ -10,7 +10,7 @@ define(function(require) {
 
 
 	(function () {
-		this.tplUrl = './demo/index/tpl/index.html';
+		this.tplUrl = './biz/index/tpl/index.html';
 
 		this.title = '示例 | 导航页';
 		
