@@ -1,0 +1,59 @@
+html,
+body, div, p, dl, dt, dd, ul, ol, li, hr, pre, table, td, th, fieldset, legend, input, button, textarea, form, img, h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+}
+
+input[type="checkbox"], input[type="radio"] {
+	position: relative;
+	margin-right: 5px;
+}
+
+input[type="checkbox"]:checked::after {
+	background: rgb(93, 135, 207);
+	border: 1px solid rgb(93, 135, 207);
+	content: '✔';
+	color: rgb(255, 255, 255);
+}
+
+input[type="checkbox"]::after {
+	content: '';
+	vertical-align: middle;
+	text-align: center;
+	position: absolute;
+	cursor: pointer;
+	height: 15px;
+	width: 15px;
+	left: -3px;
+	top: -2px;
+	font-size: 12px;
+	background: rgb(246, 246, 246);
+	border: 1px solid rgb(202, 202, 202);
+}
+
+input[type="radio"]:checked::after {
+	background: rgb(93, 135, 207);
+	border: 1px solid rgb(93, 135, 207);
+	border-image-source: initial;
+	border-image-slice: initial;
+	border-image-width: initial;
+	border-image-outset: initial;
+	border-image-repeat: initial;
+	content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gUOAxAYlzcb4gAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAOUlEQVQ4y2NgGAW0A3/+/ov8////rf///9/68/dfJDmaUQBJhkBtRge3sKlloqX/yfcCxYE4CkgDANskYV1yUt6YAAAAAElFTkSuQmCC);
+}
+
+input[type="radio"]::after {
+	content: '';
+	vertical-align: middle;
+	text-align: center;
+	position: absolute;
+	cursor: pointer;
+	height: 18px;
+	width: 18px;
+	left: -3px;
+	top: -2px;
+	font-size: 12px;
+	background: rgb(246, 246, 246);
+	border: 1px solid rgb(202, 202, 202);
+	border-radius: 50%;
+}
