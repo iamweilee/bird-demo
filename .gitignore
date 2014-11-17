@@ -4,3 +4,4 @@ moduleConfig.product.js
 asset/css/all.css
 biz/biz*.js
 .project
+npm-debug.log
