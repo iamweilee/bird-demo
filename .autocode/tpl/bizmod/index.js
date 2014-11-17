@@ -1,8 +1,9 @@
 /**
- * @file    {{__filepath__}}
- * @author  {{author}}
- * @email   {{email}}
- * @date    {{__date__}}
+ * @file     {{__filepath__}}
+ * @summary  这里写模块简介
+ * @author   {{author}}
+ * @email    {{email}}
+ * @date     {{__date__}}
  */
 define(function(require) {
 	var Class = require('bird.class');
