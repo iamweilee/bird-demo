@@ -1,0 +1,8 @@
+{
+    "author": "liwei",
+    "email": "relativeli@qq.com",
+    "tplDir": "./.autocode/tpl",
+    "destDir": {
+        "bizmod": "./biz"
+    }
+}
