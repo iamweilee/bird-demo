@@ -34,7 +34,9 @@ module.exports = function(grunt) {
     },
     uglify: {
       options: {
-        banner: '/*! biz.min.js <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+        banner: '/*! biz.min.js <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+        sourceMap: true/*,
+        sourceMapName: './biz/biz.min.js.map'*/
       },
       bird: {
         files: [{
@@ -43,7 +45,7 @@ module.exports = function(grunt) {
         }]
       }
     },
-    clean: ['tmp', 'asset/css/all.css', 'biz/biz*.js', 'moduleConfig.product.js'],
+    clean: ['tmp', 'asset/css/all.css', 'biz/biz*.js', 'moduleConfig.product.js', '**/*.map'],
     less: {
       all: {
         /*options: {
