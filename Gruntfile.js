@@ -45,7 +45,7 @@ module.exports = function(grunt) {
         }]
       }
     },
-    clean: ['tmp', 'asset/css/all.css', 'biz/biz*.js', 'moduleConfig.product.js', '**/*.map'],
+    clean: ['tmp', 'asset/css/all.css', 'biz/biz*.js', 'moduleConfig.product.js', 'biz/**/*.map'],
     less: {
       all: {
         /*options: {
