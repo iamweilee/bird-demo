@@ -79,7 +79,22 @@ module.exports = function(grunt) {
           hostname: "127.0.0.1"
         }
       }
+    },
+    watch: {
+      js: {
+        files: 'biz/**/*.js',
+        tasks: ['transport', 'concat', 'uglify']
+      },
+      css: {
+        files: 'asset/**/*.less',
+        tasks: ['less']
+      }
     }
+  });
+
+  //启动监听命令: grunt watch --force
+  grunt.event.on('watch', function(action, filepath, target) {
+    grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
 
   // Load custom task
@@ -91,7 +106,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-clean');
-  //grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   //grunt.loadNpmTasks('grunt-contrib-jshint');
   //grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-less');
