@@ -14,7 +14,7 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'biz/',
-          src: ['**/*.js'],
+          src: ['**/*.js', '!biz*'],
           dest: 'tmp/biz'
         }]
       },
@@ -82,7 +82,7 @@ module.exports = function(grunt) {
     },
     watch: {
       js: {
-        files: 'biz/**/*.js',
+        files: ['biz/**/*.js', '!biz/biz*'],
         tasks: ['transport', 'concat', 'uglify']
       },
       css: {
