@@ -54,7 +54,7 @@ define(function(require) {
 		 * 此处可针对相应的业务需要添加合理的事件绑定, 如: 为了性能优化而使用事件委托
 		 * STEP 4
 		 */
-		this.bindEvent = function(){
+		this.bindEvent = function($model,$watcher){
 			
 		};
  
@@ -64,7 +64,7 @@ define(function(require) {
 		 * 销毁变量, 释放内存
 		 * STEP 5
 		 */
-		this.beforeLeave = function(){
+		this.beforeLeave = function($model,$watcher){
 			
 		};
 		
