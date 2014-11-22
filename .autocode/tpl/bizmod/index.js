@@ -25,6 +25,7 @@ define(function(require) {
 
 		/**
 		 * 初始化数据模型, 数据的初始化工作在此方法内部完成
+		 * 这里只应出现静态数据, 这些数据在渲染模板时会同步渲染
 		 * STEP 1
 		 */
 		this.initModel = function($model,$watcher){
@@ -32,8 +33,8 @@ define(function(require) {
 		};
 
 		/**
-		 * 渲染模板前的行为, 此处不应出现数据的操作
-		 * 具体该做什么视情况而定, 多数情况下该方法用不着
+		 * 此时模板已渲染完成, 实际是从后台请求的数据返回后的操作
+		 * 这里可以修改数据的结构以满足模板需要
 		 * STEP 2
 		 */
 		this.beforeRender = function($model,$watcher){
@@ -41,8 +42,8 @@ define(function(require) {
 		};
 
 		/**
-		 * 渲染模板后的行为, 此时页面的DOM结构已被模板和model更新
-		 * 此处可做针对DOM的额外操作
+		 * 后台返回的数据更新视图之后进入的流程
+		 * 此处可做针对DOM的额外操作, 但若要手动更新视图必须调用$model.set方法
 		 * STEP 3
 		 */
 		this.afterRender = function($model,$watcher){
