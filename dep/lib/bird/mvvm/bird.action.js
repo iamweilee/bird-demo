@@ -2,7 +2,7 @@
  * 所有业务Action的基类,定义了一个Action应该包含的一系列接口
  * 所有业务子Action必须继承该类
  */
-define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array", "bird.util", "bird.request", "./bird.model", "./bird.databind", "./bird.globalcontext", "./bird.validator", "bird.lrucache" ], function(require) {
+define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array", "bird.util", "bird.request", "./bird.model", "./bird.databind", "./bird.globalcontext", "./bird.requesthelper", "./bird.validator", "bird.lrucache" ], function(require) {
     var Q = require("q");
     var object = require("bird.object");
     var lang = require("bird.lang");
@@ -13,6 +13,7 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
     var Model = require("./bird.model");
     var DataBind = require("./bird.databind");
     var globalContext = require("./bird.globalcontext");
+    var RequestHelper = require("./bird.requesthelper");
     var validator = require("./bird.validator");
     var LRUCache = require("bird.lrucache");
     function Action() {
@@ -20,12 +21,9 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
         this.model = new Model();
         this.dataBind = new DataBind();
         this.dataBinds = [];
+        this.requestHelper = new RequestHelper();
         this.lruCache = new LRUCache();
         this.args = {};
-        this.actionUrlMap = {};
-        this.urlActionMap = {};
-        this.requestDataCache = {};
-        this.dataRequestPromise = null;
         this.lifePhase = this.LifeCycle.NEW;
         this.init();
     }
@@ -42,34 +40,49 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
             DESTROYED: 5
         };
         this.tpl = "";
-        this.container = document.getElementById("Container");
+        this.name = "";
+        this.container = document.getElementById("wrapper");
         this.init = function() {
-            this.lifePhase = this.LifeCycle.INITED;
-        };
-        this.initRequestURL = function(map) {
-            if (!lang.isPlainObject(map)) {
-                return;
+            if (!this.requestUrl) {
+                this.requestUrl = {};
             }
-            this.actionUrlMap = map;
-            var me = this;
-            object.forEach(this.actionUrlMap, function(url, action) {
-                me.urlActionMap[url] || (me.urlActionMap[url] = []);
-                me.urlActionMap[url].push(action);
-            });
+            if (!this.requestUrlWhenEnter) {
+                this.requestUrlWhenEnter = {};
+            }
+            object.extend(this.requestUrl, this.requestUrlWhenEnter);
+            if (!this.requestUrl.resource) {
+                this.requestUrl.resource = "/api/" + this.name;
+            }
+            this.requestHelper.generateRequestMethods(this.requestUrl, this.name);
+            this.lifePhase = this.LifeCycle.INITED;
         };
         this.requestData = function() {
             var me = this;
             var deferred;
             var promiseArr = [];
-            if (lang.isNotEmpty(this.urlActionMap)) {
-                object.forEach(this.urlActionMap, function(actions, url) {
+            if (lang.isNotEmpty(this.requestUrlWhenEnter)) {
+                this.requestDataCache = {};
+                object.forEach(this.requestUrlWhenEnter, function(value, key) {
+                    var arr = value.split(/\s+/);
+                    var reqType = arr && arr[0];
+                    var url = arr && arr[1];
+                    if (/\{\{[^{}]+\}\}/.test(url)) {
+                        url = string.format(url, me.args);
+                    }
                     deferred = Q.defer();
                     (function(deferred) {
-                        request.get(url, me.argMap, function(data) {
-                            array.forEach(actions, function(action) {
-                                me.requestDataCache[action] = data;
-                            });
-                            deferred.resolve();
+                        request.ajax({
+                            url: url,
+                            requestType: reqType,
+                            data: me.args,
+                            complete: function(data) {
+                                data = data && data.result || data || {};
+                                object.extend(me.requestData, data);
+                                deferred.resolve();
+                            },
+                            error: function() {
+                                deferred.resolve();
+                            }
                         });
                     })(deferred);
                     promiseArr.push(deferred.promise);
@@ -83,30 +96,9 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
         };
         //子类可以覆盖该接口
         this.initModel = function(modelReference, watcherReference) {};
-        this._initModel = function(args) {
+        this._initModel = function() {
             this.initModel(this.model, this.model.watcher);
             this.lifePhase = this.LifeCycle.MODEL_BOUND;
-        };
-        /**
-		 * @deprecated
-		 * 请使用$.set()
-		 */
-        this.setToModel = function(key, value) {
-            this.model.set(key, value, this.dataBind);
-        };
-        /**
-		 * @deprecated
-		 * 请使用$.toJSON()
-		 */
-        this.getModelObject = function() {
-            var ret = {};
-            object.forEach(this.model, function(v, k) {
-                if (lang.isFunction(v)) {
-                    return;
-                }
-                ret[k] = v;
-            });
-            return ret;
         };
         /*
 		 * 初始模板应用双向绑定
@@ -146,15 +138,15 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
         };
         //子类可以覆盖该接口,自定义事件绑定逻辑
         this.bindEvent = function(modelReference, watcherReference) {};
-        this._bindEvent = function(modelReference, watcherReference) {
-            this.bindEvent(modelReference, watcherReference);
+        this._bindEvent = function() {
+            this.bindEvent(this.model, this.model.watcher);
             this.lifePhase = this.LifeCycle.EVENT_BOUND;
         };
         //子类可以覆盖该接口,用来修改从服务器端获取的数据的结构以满足页面控件的需求
-        this.beforeRender = function(modelReference, watcherReference) {};
+        this.beforeRender = function(modelReference, watcherReference, requestDataReference) {};
         this.render = function() {
             var me = this;
-            object.forEach(this.requestDataCache, function(value, key) {
+            object.forEach(this.requestData, function(value, key) {
                 me.model.set(key, value);
             });
             this.lifePhase = this.LifeCycle.RENDERED;
@@ -177,19 +169,20 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
         this.enter = function(args) {
             var me = this;
             this.args = args;
-            this.initRequestURL();
-            this._initModel();
             this.requestData();
+            this._initModel();
             this.loadTpl();
             this.tplRequestPromise.then(function() {
                 //根据Action的变化更新浏览器标题栏
-                document.title = me.title || "";
+                if (me.title) {
+                    document.title = me.title;
+                }
                 me._applyBind();
                 if (me.lifePhase < me.LifeCycle.EVENT_BOUND) {
-                    me._bindEvent(me.model, me.model.watcher);
+                    me._bindEvent();
                 }
                 me.dataRequestPromise.spread(function() {
-                    me.beforeRender(me.model, me.model.watcher);
+                    me.beforeRender(me.model, me.model.watcher, me.requestData);
                     me.render();
                     me.afterRender(me.model, me.model.watcher);
                 }).done();
@@ -201,6 +194,8 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
             this.beforeLeave(this.model, this.model.watcher);
             globalContext.remove(this.id);
             validator.clearMessageStack();
+            this.requestData = null;
+            this.dataRequestPromise = null;
             this.dataBind.destroy();
             array.forEach(this.dataBinds, function(dataBind) {
                 dataBind.destroy(true);
