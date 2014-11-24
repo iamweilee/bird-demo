@@ -3914,21 +3914,23 @@ define("bird.request", [ "./bird.dom", "./bird.lang", "./bird.string", "./bird.u
                 responseType: "json"
             };
             object.extend(obj, arg);
+            xhr.responseType = obj.responseType;
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
                     if (xhr.status == 200) {
                         if (lang.isFunction(obj.complete)) {
-                            if (string.equalsIgnoreCase(obj.responseType, "xml")) {
-                                obj.complete(xhr.responseXML);
+                            if (string.equalsIgnoreCase(obj.responseType, "json")) {
+                                obj.complete(xhr.response, xhr.status);
+                            } else if (string.equalsIgnoreCase(obj.responseType, "xml")) {
+                                obj.complete(xhr.responseXML, xhr.status);
                             } else {
-                                obj.complete(xhr.responseText);
+                                obj.complete(xhr.responseText, xhr.status);
                             }
                         }
                     } else {
                         if (lang.isFunction(obj.error)) {
-                            obj.error(xhr.statusText);
+                            obj.error(xhr.statusText, xhr.status);
                         }
-                        console.log(xhr.statusText);
                     }
                 }
             };
@@ -4589,12 +4591,11 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
             this.requestHelper.generateRequestMethods(this.requestUrl, this.name);
             this.lifePhase = this.LifeCycle.INITED;
         };
-        this.requestData = function() {
+        this._requestData = function() {
             var me = this;
             var deferred;
             var promiseArr = [];
             if (lang.isNotEmpty(this.requestUrlWhenEnter)) {
-                this.requestDataCache = {};
                 object.forEach(this.requestUrlWhenEnter, function(value, key) {
                     var arr = value.split(/\s+/);
                     var reqType = arr && arr[0];
@@ -4607,10 +4608,11 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
                         request.ajax({
                             url: url,
                             requestType: reqType,
-                            data: me.args,
+                            responseType: "json",
+                            data: me.args && me.args.param,
                             complete: function(data) {
                                 data = data && data.result || data || {};
-                                object.extend(me.requestData, data);
+                                me.model[url] = data;
                                 deferred.resolve();
                             },
                             error: function() {
@@ -4676,14 +4678,13 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
             this.lifePhase = this.LifeCycle.EVENT_BOUND;
         };
         //子类可以覆盖该接口,用来修改从服务器端获取的数据的结构以满足页面控件的需求
-        this.beforeRender = function(modelReference, watcherReference, requestDataReference) {};
-        this.render = function() {
-            var me = this;
-            object.forEach(this.requestData, function(value, key) {
-                me.model.set(key, value);
-            });
+        this.beforeRender = function(modelReference, watcherReference) {};
+        this._render = function() {
+            this.render(this.model, this.model.watcher);
             this.lifePhase = this.LifeCycle.RENDERED;
         };
+        //子类可以覆盖该接口,请求后台数据返回后重新渲染模板部分内容
+        this.render = function(modelReference, watcherReference) {};
         //子类可以覆盖该接口,可能用来修改一些元素的状态等善后操作
         this.afterRender = function(modelReference, watcherReference) {};
         this.loadTpl = function() {
@@ -4692,7 +4693,7 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
                 deferred.resolve();
             } else {
                 var me = this;
-                request.get(this.tplUrl + "?" + new Date().getTime(), function(data) {
+                request.load(this.tplUrl + "?" + new Date().getTime(), function(data) {
                     me.constructor.prototype.tpl = data;
                     deferred.resolve();
                 });
@@ -4702,7 +4703,7 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
         this.enter = function(args) {
             var me = this;
             this.args = args;
-            this.requestData();
+            this._requestData();
             this._initModel();
             this.loadTpl();
             this.tplRequestPromise.then(function() {
@@ -4715,8 +4716,8 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
                     me._bindEvent();
                 }
                 me.dataRequestPromise.spread(function() {
-                    me.beforeRender(me.model, me.model.watcher, me.requestData);
-                    me.render();
+                    me.beforeRender(me.model, me.model.watcher);
+                    me._render();
                     me.afterRender(me.model, me.model.watcher);
                 }).done();
             }).done();
@@ -4727,7 +4728,6 @@ define("bird.action", [ "q", "bird.object", "bird.lang", "bird.dom", "bird.array
             this.beforeLeave(this.model, this.model.watcher);
             globalContext.remove(this.id);
             validator.clearMessageStack();
-            this.requestData = null;
             this.dataRequestPromise = null;
             this.dataBind.destroy();
             array.forEach(this.dataBinds, function(dataBind) {
