@@ -1,0 +1,22 @@
+/**
+ * @type    Response
+ * @result  success
+ */
+ {
+ 	"success": 1,
+ 	"message": "",
+ 	"result": [
+		{
+			"id": 123,
+			"name": "百度"
+		},
+		{
+			"id": 234,
+			"name": "阿里巴巴"
+		},
+		{
+			"id": 345,
+			"name": "腾讯"
+		}
+	]
+ }

@@ -1,0 +1,9 @@
+/**
+ * @type    Response
+ * @result  success
+ */
+ {
+ 	"success": 1,
+ 	"message": "",
+ 	"result": {}
+ }

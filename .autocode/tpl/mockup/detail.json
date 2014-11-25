@@ -1,0 +1,12 @@
+/**
+ * @type    Response
+ * @result  success
+ */
+ {
+ 	"success": 1,
+ 	"message": "",
+ 	"result": {
+ 		"id": "123",
+ 		"name": "百度"
+ 	}
+ }

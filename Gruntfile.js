@@ -75,8 +75,53 @@ module.exports = function(grunt) {
         options: {
           port: 9001,
           base: '.',
-          keepalive: true,
-          hostname: "127.0.0.1"
+          //keepalive: true,//一旦开启, 就不会启动后面的watch
+          hostname: "127.0.0.1",
+          middleware: function(connect, options, middlewares) {
+            var fs = require('fs');
+            //var urlHelper = require('url');
+            // inject a custom middleware into the array of default middlewares
+            middlewares.unshift(function(req, res, next) {
+              if (!mockEnable || !/\/api\//.test(req.url)) {
+                return next();
+              }
+
+              //var param = urlHelper.parse(req.url, true).query;
+
+              //console.log(req.url);
+
+              var arr = req.url.split('?');
+              var url = arr && arr[0];
+              url = url.replace(/^\/api/, '/mockup');
+              var method = req.method.toUpperCase();
+              if('GET' === method) {
+                if(/\/\d+$/.test(url)) {
+                  url = url.replace(/\/\d+$/, '/detail.json');
+                }else{
+                  url += (/\/$/.test(url) ? '' : '/') + 'list.json';
+                }
+              }else if('POST' === method) {
+                url += (/\/$/.test(url) ? '' : '/') + 'create.json';
+              }else if('PUT' === method || 'PATCH' === method) {
+                url = url.replace(/\/\d+$/, '');
+                url += (/\/$/.test(url) ? '' : '/') + 'update.json';
+              }else if('DELETE' === method) {
+                url = url.replace(/\/\d+$/, '');
+                url += (/\/$/.test(url) ? '' : '/') + 'delete.json';
+              }
+
+              var text = fs.readFileSync('.' + url, 'utf8');
+              text = text.replace(/\/\*(.|\n|\r)+\*\/?/,'');//注释删除多行
+              text = text.replace(/\/\/.+/,'');//删除单行注释
+
+              //var json = JSON.parse(text);
+              //res.setHeader("Content-Type", "application/json");
+
+              res.end(text);
+            });
+
+            return middlewares;
+          }
         }
       }
     },
@@ -113,5 +158,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-cmd-transport');
   grunt.loadNpmTasks('grunt-contrib-connect');
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'copy', 'less', 'transport', 'concat', 'uglify', 'connect']);
+  grunt.registerTask('default', ['clean', 'copy', 'less', 'transport', 'concat', 'uglify', 'connect', 'watch']);
 };
