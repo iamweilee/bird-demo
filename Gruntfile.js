@@ -16,7 +16,7 @@ module.exports = function(grunt) {
           expand: true,
           cwd: 'biz/',
           src: ['**/*.js', '!biz*'],
-          dest: 'tmp/biz'
+          dest: 'output/tmp/biz'
         }]
       },
     },
@@ -28,9 +28,9 @@ module.exports = function(grunt) {
               + ' */\n',
         separator: '\n'
       },
-      bird: {
-        src: ['tmp/biz/**'],
-        dest: 'biz/biz.js'
+      biz: {
+        src: ['output/tmp/biz/**'],
+        dest: 'output/biz/biz.js'
       }
     },
     uglify: {
@@ -39,14 +39,17 @@ module.exports = function(grunt) {
         sourceMap: true/*,
         sourceMapName: './biz/biz.min.js.map'*/
       },
-      bird: {
+      biz: {
         files: [{
-          src: ['biz/biz.js'],
-          dest: 'biz/biz.min.js'
+          src: ['output/biz/biz.js'],
+          dest: 'output/biz/biz.min.js'
         }]
       }
     },
-    clean: ['tmp', 'asset/css/all.css', 'biz/biz*.js', 'moduleConfig.product.js', 'biz/**/*.map'],
+    clean: {
+      output: ['output'],
+      tmp: ['output/tmp']
+    },
     less: {
       all: {
         /*options: {
@@ -54,14 +57,39 @@ module.exports = function(grunt) {
           cleancss: true
         },*/
         files: {
-          "asset/css/all.css": "asset/css/all.less"
+          "output/asset/css/all.css": "asset/css/all.less"
         }
       }
     },
     copy: {
+      root: {
+        files: [
+          {expand: true, src: ['app.js', 'index.html'], dest: 'output/', filter: 'isFile'}
+        ]
+      },
+      dep: {
+        files: [
+          {expand: true, src: ['dep/**'], dest: 'output/'}
+        ]
+      },
+      asset: {
+        files: [
+          {expand: true, src: ['asset/font/**', 'asset/img/**'], dest: 'output/'}
+        ]
+      },
+      tpl: {
+        files: [
+          {expand: true, src: ['biz/**/*.html'], dest: 'output/'}
+        ]
+      },
+      biz: {
+        files: [
+          {expand: true, src: ['biz/*'], dest: 'output/', filter: 'isFile'}
+        ]
+      },
       moduleConfig: {
         src: 'moduleConfig.js',
-        dest: 'moduleConfig.product.js',
+        dest: 'output/moduleConfig.js',
         options: {
           process: function (content, srcpath) {
             content = content.replace(/\/\/begin/g, '/*//begin');
@@ -74,8 +102,8 @@ module.exports = function(grunt) {
     connect: {
       server: {
         options: {
-          port: 9001,
-          base: '.',
+          port: 80,
+          base: './output',
           //keepalive: true,//一旦开启, 就不会启动后面的watch
           hostname: "127.0.0.1",
           middleware: function(connect, options, middlewares) {
@@ -129,11 +157,31 @@ module.exports = function(grunt) {
     watch: {
       js: {
         files: ['biz/**/*.js', '!biz/biz*'],
-        tasks: ['transport', 'concat', 'uglify']
+        tasks: ['copy:biz', 'transport', 'concat', 'clean:tmp' ,'uglify']
       },
       css: {
         files: 'asset/**/*.less',
         tasks: ['less']
+      },
+      asset: {
+        files: ['asset/img/**', 'asset/font/**'],
+        tasks: ['copy:asset']
+      },
+      moduleConfig: {
+        files: 'moduleConfig.js',
+        tasks: ['copy:moduleConfig']
+      },
+      dep: {
+        files: 'dep/**',
+        tasks: ['copy:dep']
+      },
+      root: {
+        files: ['index.html', 'app.js'],
+        tasks: ['copy:root']
+      },
+      tpl: {
+        files: ['biz/**/*.html'],
+        tasks: ['copy:tpl']
       }
     }
   });
@@ -159,5 +207,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-cmd-transport');
   grunt.loadNpmTasks('grunt-contrib-connect');
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'copy', 'less', 'transport', 'concat', 'uglify', 'connect', 'watch']);
+  grunt.registerTask('default', ['clean', 'copy', 'less', 'transport', 'concat', 'clean:tmp', 'uglify', 'connect', 'watch']);
 };

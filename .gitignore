@@ -1,7 +1,4 @@
 node_modules
-tmp
-moduleConfig.product.js
-asset/css/all.css
-biz/biz*.js
+output
 .project
 npm-debug.log
