@@ -57,3 +57,47 @@ input[type="radio"]::after {
 	border: 1px solid rgb(202, 202, 202);
 	border-radius: 50%;
 }
+
+/**
+ * Firefox 浏览器对 fieldset 元素设置了一些影响 width 属性的样式，导致响应式表格出现问题
+ * 此为hack方法
+ */
+@-moz-document url-prefix() {
+  fieldset { display: table-cell; }
+}
+
+
+#wrapper{
+	position:absolute;
+	width: 100%;
+	left:50%;
+	margin-left: -50%;
+	top:0;
+}
+
+
+img.bg{
+	width: 100%;
+	height: auto;
+}
+
+.nobg{
+	.bg_layer{
+		display: none;
+	}
+
+	.homepage{
+		.main{
+			.suggest{
+				a{
+					color: #428bca;
+				}
+			}
+		}
+	}
+}
+
+.inner_wrapper{
+	margin:0 auto;
+	min-height: 100%;
+}

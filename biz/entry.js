@@ -23,7 +23,7 @@ define(function(require) {
 		init: function() {
 			console.log("Demo Entry Module Inited!");
 
-			Action.setContainer('Container');
+			Action.setContainer('wrapper');
 			
 			/*require('errorTrack').init({
 				url : "/errortrack.action"
