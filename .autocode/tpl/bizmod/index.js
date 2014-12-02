@@ -10,6 +10,16 @@ define(function(require) {
 	var Action = require('bird.action');
 
 	function Index() {
+		//这里配置后台数据请求的URL
+		this.requestUrl = {
+
+		};
+
+		//这里配置进入Action时初始化数据请求的URL
+		this.requestUrlWhenEnter = {
+
+		};
+		
 		Index.superClass.apply(this, arguments);
 	}
 
@@ -17,6 +27,9 @@ define(function(require) {
 
 
 	(function() {
+		//配置模块名称
+		this.name = '{{__moduleprefix__}}';
+		
 		//配置模板的路径
 		this.tplUrl = './biz/{{__moduleprefix__}}/tpl/index.html';
 
