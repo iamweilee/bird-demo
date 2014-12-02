@@ -92,8 +92,7 @@ module.exports = function(grunt) {
         dest: 'output/moduleConfig.js',
         options: {
           process: function (content, srcpath) {
-            content = content.replace(/\/\/begin/g, '/*//begin');
-            content = content.replace(/\/\/end/g, '//end*/');
+            content = content.replace(/\/\/begin(.|\n|\r)+\/\/end/, '');
             return content;
           }
         }
