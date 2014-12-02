@@ -3,6 +3,7 @@
  */
 module.exports = function(grunt) {
 
+  var mockEnable = true;
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
