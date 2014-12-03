@@ -14,7 +14,7 @@
 		app: {
 			prefix: modprefix + 'biz/',
 			mods: [
-				'common/404' ,'index/index', 'todos/todos', 'bootstrap/bs', 
+				'common/404' ,'homepage/index', 'todos/todos', 'bootstrap/bs', 
 				'entry'
 			]
 		}

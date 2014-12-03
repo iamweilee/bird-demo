@@ -2,7 +2,7 @@ define(function(require) {
 	var config = [
 		{
 			location: '/',
-			action: 'index/index'
+			action: 'homepage/index'
 		}, {
 			location: '/todos',
 			action: 'todos/todos'

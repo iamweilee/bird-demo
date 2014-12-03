@@ -1,6 +1,6 @@
 /**
  * @file     {{__filepath__}}
- * @summary  这里写模块简介
+ * @summary  {{__moduleprefix__}}
  * @author   {{author}}
  * @email    {{email}}
  * @date     {{__date__}}
@@ -19,7 +19,7 @@ define(function(require) {
 		this.requestUrlWhenEnter = {
 
 		};
-		
+
 		Index.superClass.apply(this, arguments);
 	}
 

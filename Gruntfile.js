@@ -57,7 +57,7 @@ module.exports = function(grunt) {
           cleancss: true
         },*/
         files: {
-          "output/asset/css/all.css": "asset/css/all.less"
+          "output/asset/all.css": "asset/all.less"
         }
       }
     },
@@ -159,7 +159,7 @@ module.exports = function(grunt) {
         tasks: ['copy:biz', 'transport', 'concat', 'clean:tmp' ,'uglify']
       },
       css: {
-        files: 'asset/**/*.less',
+        files: ['biz/**/*.less', 'asset/*.less'],
         tasks: ['less']
       },
       asset: {
