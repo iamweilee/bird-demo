@@ -4154,6 +4154,7 @@ define("bird.string", [], function(require) {
         var placeholderRE = /\{\{(.+?)\}\}/g;
         var spaceBetweenTagsRE = /(<[a-zA-Z]+\d*\s*[^>]*\/?>)[\s\xa0\u3000]+|(<\/[a-zA-Z]+\d*>)[\s\xa0\u3000]+|[\s\xa0\u3000]+(<[a-zA-Z]+\d*\s*[^>]*\/?>)|[\s\xa0\u3000]+(<\/[a-zA-Z]+\d*>)/g;
         var bothEndQuotesRE = /(['"])([^'"])\1/;
+        var htmlCommentsRE = /<!--(?:.|\r|\n)*?-->/g;
         this.capitalize = function(str) {
             return str.replace(capitalizeRE, function(s) {
                 return s.toUpperCase();
@@ -4180,6 +4181,9 @@ define("bird.string", [], function(require) {
             return str.replace(spaceBetweenTagsRE, function(m, n, o, p, q) {
                 return n || o || p || q || "";
             });
+        };
+        this.removeHtmlComments = function(str) {
+            return str.replace(htmlCommentsRE, "");
         };
         //\xa0 -> &nbsp;    \u3000 -> 全角空格
         this.trim = function(s) {
@@ -6031,7 +6035,7 @@ define("bird.tplparser", [ "bird.dom", "bird.lang", "bird.array", "bird.event", 
         var literalAttrs = [ "id" ];
         //valueVariable是用来为checkbox 、radio 、select服务的
         //这三个控件的value通常作为固定选项值存在
-        var variableAttrs = [ "class", "src", "href", "value", "valueVariable", "style", "type", "alt", "for", "readonly", "disabled", "checked", "selected", "placeholder", "width", "height", "cols", "border", "rowspan", "colspan", "bgcolor", "align", "border", "cellpadding", "cellspacing", "frame", "rules", "summary", "download", "coords", "media", "hreflang", "rel", "target", "shape", "autoplay", "controls", "loop", "muted", "preload", "autofocus", "form", "formaction", "name", "formmethod", "formtarget", "formnovalidate", "formenctype", "cite", "datetime", "valuetype", "open", "poster" ];
+        var variableAttrs = [ "class", "src", "href", "value", "valueVariable", "style", "type", "alt", "for", "readonly", "disabled", "checked", "selected", "placeholder" ];
         var parseFunctionNames = [ "_parseInlineEvents", "_parseCustomAttr" ];
         var regExpMap = {
             htmlStartTag: /<([a-zA-Z]+\d*)([^>]*?)\/?>/g,
@@ -6093,6 +6097,7 @@ define("bird.tplparser", [ "bird.dom", "bird.lang", "bird.array", "bird.event", 
         this._generateLiteralParser(literalAttrs);
         this._generateVariableParser(variableAttrs);
         this.parseTpl = function(str) {
+            str = string.removeHtmlComments(str);
             this.parsedTpl = string.removeSpaceBetweenTags(str);
             this._parseHtmlProperties();
             this._parseTextContent();
@@ -6141,9 +6146,19 @@ define("bird.tplparser", [ "bird.dom", "bird.lang", "bird.array", "bird.event", 
         };
         this._compilePropertyTplStr = function(propertyStr, parsedInfo, matchedStr) {
             var me = this;
-            propertyStr && array.forEach(parseFunctionNames, function(name) {
-                me[name](propertyStr, parsedInfo);
-            });
+            if (propertyStr) {
+                propertyStr.replace(/\s+([a-z][a-z0-9_\-$]*=(['"])\s*(?:.|\n|\r)*?\s*\2)/gi, function(m, prop) {
+                    if ((/^id=/i.test(prop) || regExpMap.hasVariable.test(prop)) && /\=/.test(prop)) {
+                        var propKey = prop.split("=")[0];
+                        var fn = /^on/i.test(propKey) ? me._parseInlineEvents : me["_parse" + string.capitalize(propKey)];
+                        if (lang.isFunction(fn)) {
+                            fn.call(me, propertyStr, parsedInfo);
+                        } else {
+                            me.parseUnregisterProperty(propKey, propertyStr, parsedInfo);
+                        }
+                    }
+                });
+            }
             this._addBindIdToHtmlStartTag(matchedStr, parsedInfo.bindId);
         };
         this._addBindIdToHtmlStartTag = function(tagStr, bindId) {
@@ -6241,6 +6256,23 @@ define("bird.tplparser", [ "bird.dom", "bird.lang", "bird.array", "bird.event", 
                 });
             }
             return ret;
+        };
+        this.parseUnregisterProperty = function(val, str, parsedInfoCache) {
+            var reg = new RegExp("\\s+" + val + "=(['\"])\\s*((?:.|\\n|\\r)*?)\\s*\\1", "i");
+            var arr = reg.exec(str);
+            if (arr) {
+                var varAndFilter = this._parsePlaceholderVariableAndFilter(arr[2]);
+                if (varAndFilter) {
+                    var vari = varAndFilter[1];
+                    var filter = varAndFilter[2];
+                    if (vari) {
+                        var parsedInfo = parsedInfoCache[val] = {
+                            variable: vari
+                        };
+                        filter && (parsedInfo.filter = filter);
+                    }
+                }
+            }
         };
         this.destroy = function() {
             object.forEach(this.parsedInfoCache, function(v, k, cache) {
