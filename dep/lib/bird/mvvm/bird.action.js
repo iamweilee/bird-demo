@@ -86,12 +86,12 @@ define("bird.action", [ "bird.object", "bird.lang", "bird.dom", "bird.array", "b
                         data: me.args && me.args.param,
                         complete: function(data) {
                             data = data && data.result || data || {};
-                            me.model[url] = data;
+                            me.model.set(url, data);
                             me.promise.requestCount--;
                             me.promise.callCallback();
                         },
                         error: function() {
-                            me.promise.requestCount = 0;
+                            me.promise.requestCount--;
                             me.promise.callCallback();
                         }
                     });
