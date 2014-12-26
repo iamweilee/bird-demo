@@ -2,7 +2,7 @@
  * @file: bird.js
  * @author: liwei47@baidu.com
  * @version: 1.0.0
- * @date: 2014-12-15
+ * @date: 2014-12-26
  */
 /**
  *	封装LRU cache为独立模块
@@ -2997,17 +2997,33 @@ define("bird.dom", [ "./bird.lang", "./bird.util", "./bird.string", "./bird.arra
         this.setText = function(element, content) {
             "textContent" in element ? element.textContent = content : element.innerText = content;
         };
+        this.getText = function(element) {
+            return "textContent" in element ? element.textContent : element.innerText;
+        };
         this.setValue = function(element, value) {
             element.value = value;
         };
+        this.getValue = function(element) {
+            return element.value;
+        };
         this.setHtml = function(element, htmlContent) {
             element.innerHTML = htmlContent;
+        };
+        this.getHtml = function(element) {
+            return element.innerHTML;
         };
         this.setAttr = function(element, attrName, value) {
             if (lang.isFunction(element.setAttribute)) {
                 element.setAttribute(attrName, value);
             } else {
                 element[attrName] = value;
+            }
+        };
+        this.getAttr = function(element, attrName) {
+            if (lang.isFunction(element.getAttribute)) {
+                return element.getAttribute(attrName);
+            } else {
+                return element[attrName];
             }
         };
         this.setCssText = function(el, cssText) {
@@ -4118,6 +4134,37 @@ define("bird.requestframe", [], function(require) {
     }).call(RequestAFrame.prototype);
     return new RequestAFrame();
 });
+/**
+ * sessionstorage: 会话级别存储
+ * sessionStorage & cookie
+ *
+ */
+define("bird.sessionstorage", [], function() {
+    function SessionStorage() {
+        this.isSessionStorageSupported = !!window.sessionStorage;
+        if (!this.isSessionStorageSupported) {
+            this.expires = 0;
+        }
+    }
+    (function() {
+        this.setItem = function(key, value) {
+            if (this.isSessionStorageSupported) {
+                sessionStorage.setItem(key, value);
+            }
+        };
+        this.getItem = function(key) {
+            if (this.isSessionStorageSupported) {
+                return sessionStorage.getItem(key);
+            }
+        };
+        this.remove = function(key) {
+            if (this.isSessionStorageSupported) {
+                sessionStorage.removeItem(key);
+            }
+        };
+    }).call(SessionStorage.prototype);
+    return new SessionStorage();
+});
 define("bird.spirit", [ "./bird.requestframe" ], function(require) {
     var reqFrame = require("./bird.requestframe");
     function Spirit() {}
@@ -4303,6 +4350,9 @@ define("bird.string", [], function(require) {
             return s.replace(camelizeRE, function(m, char) {
                 return char.toUpperCase();
             });
+        };
+        this.escapeRegExp = function(s) {
+            return s.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
         };
         this.format = function(template, data) {
             if (!template) {
